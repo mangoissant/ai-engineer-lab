@@ -18,6 +18,7 @@ client = OpenAI()
 
 MODEL = "gpt-6-luna"
 
+conversation = []
 
 print("AI Assistant")
 print("종료하려면 exit 입력")
@@ -30,23 +31,41 @@ while True:
     if user_input.lower() == "exit":
         print("종료합니다.")
         break
+    
+    if user_input.lower() == "reset":
+        conversation.clear()
+        continue
 
     if not user_input:
         continue
-
+    conversation.append(
+        {
+            "role": "user",
+            "content": user_input,
+        }
+    )
     try:
 
         response = client.responses.create(
             model=MODEL,
             instructions=(
-                "You are an AI startup mentor. "
-                "Answer in Korean. "
-                "Be concise and always give one practical example."
+                "You are a helpful AI assistant. "
+                "Answer clearly and concisely in Korean."
             ),
-            input=user_input,
+            input=conversation,
         )
 
-        print("\nAI:", response.output_text)
+        ai_text = response.output_text
+
+        print("\nAI:", ai_text)
+
+        conversation.append(
+            {
+                "role": "assistant",
+                "content": ai_text,
+            }
+        )
+
 
     except Exception as error:
 
